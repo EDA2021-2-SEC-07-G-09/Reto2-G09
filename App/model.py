@@ -106,7 +106,46 @@ def addArtista(museo, artista):
 def addObra(museo, obra):
     
     lt.addLast(museo['obras'], obra)
-    mp.put(museo['obras'], obra['Medium'], obra)
+    medios = obra['Medium'].split(",")  # Se obtienen los autores
+    for medio in medios:
+        addMedio(museo, medio.strip(), obra)
+
+def addMedio(museo, medio, obra):
+
+    medios = museo['medio']
+    existauthor = mp.contains(medios, medio)
+    if existauthor:
+        entry = mp.get(medios, medio)
+        author = me.getValue(entry)
+    else:
+        author = newMedio(medio)
+        mp.put(medios, medio, author)
+    print(author)
+    lt.addLast(author['Medium'], obra)
+    
+    
+def newMedio(name):
+    """
+    Crea una nueva estructura para modelar los libros de un autor
+    y su promedio de ratings. Se crea una lista para guardar losx
+    libros de dicho autor.
+    """
+    medio = {'name': "",
+              "obras": None}
+
+    medio['name'] = name
+    medio['obras'] = lt.newList('SINGLE_LINKED', cmpArtworkByDate)
+    return medio
+
+def getBooksByMedio(museo, medio):
+    """
+    Retorna un autor con sus libros a partir del nombre del autor
+    """
+    author = mp.get(museo['medio'], medio)
+    if author:
+        return me.getValue(author)
+    return None
+
 # Funciones para creacion de datos
 
 # Funciones de consulta
@@ -653,10 +692,10 @@ def sumaPrecios(obras):
     return cuenta
 #requisito lab 5
 def filtrarTencnica(museo, tecnica):
-    a= museo['medios']
+    a= museo['medio']
     tecnica=mp.get(a,tecnica)
     if tecnica:
-        return me.getValue(tecnica)['obras']
+        return me.getValue(tecnica)
     return None
 
 def sortArrayListMergeDate(lista):

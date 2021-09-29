@@ -21,6 +21,7 @@
  """
 
 import config as cf
+from DISClib.ADT import list as lt
 import model
 import csv
 
@@ -60,6 +61,11 @@ def cargarObras(museo):
     input_file = csv.DictReader(open(tagsfile, encoding='utf-8'))
     for obra in input_file:
         model.addObra(museo, obra)
+
+def cargarMedio(lista, medio):
+    for obra in lista:
+        model.addMedio(lista, medio, obra)
+
 
 
 # Funciones de ordenamiento
