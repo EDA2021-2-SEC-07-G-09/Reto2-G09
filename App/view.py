@@ -44,6 +44,7 @@ def printMenu():
     print("5- Consultar la lista de obras clasificadas por la nacionalidad de su creador")
     print("6- Consultar el costo de transportar las obras de un departamento")
     print("7- Consultar la nueva exposición propuesta según el area disponible")
+    print("8- Consultar las obras mas antiguas de una tecnica")
     print("0- Salir")
 
 

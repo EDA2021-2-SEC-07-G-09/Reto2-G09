@@ -113,30 +113,15 @@ def addObra(museo, obra):
 def addMedio(museo, medio, obra):
 
     medios = museo['medio']
-    existauthor = mp.contains(medios, medio)
-    if existauthor:
-        entry = mp.get(medios, medio)
-        author = me.getValue(entry)
+    existe = mp.contains(medios, medio)
+    if existe:
+        dupla = mp.get(medios, medio)
+        medio_actual = me.getValue(dupla)
     else:
-        author = newMedio(medio)
-        mp.put(medios, medio, author)
-    print(author)
-    lt.addLast(author['Medium'], obra)
+        medio_actual = lt.newList("ARRAY_LIST")
+        mp.put(medios, medio, medio_actual)
+    lt.addLast(medio_actual, obra)
     
-    
-def newMedio(name):
-    """
-    Crea una nueva estructura para modelar los libros de un autor
-    y su promedio de ratings. Se crea una lista para guardar losx
-    libros de dicho autor.
-    """
-    medio = {'name': "",
-              "obras": None}
-
-    medio['name'] = name
-    medio['obras'] = lt.newList('SINGLE_LINKED', cmpArtworkByDate)
-    return medio
-
 def getBooksByMedio(museo, medio):
     """
     Retorna un autor con sus libros a partir del nombre del autor
@@ -697,54 +682,12 @@ def filtrarTencnica(museo, tecnica):
     if tecnica:
         return me.getValue(tecnica)
     return None
-
-def sortArrayListMergeDate(lista):
-    size = lt.size(lista)
-    if size > 1:
-        mid = (size // 2)
-        """se divide la lista original, en dos partes, izquierda y derecha,
-        desde el punto mid."""
-        leftlist = lt.subList(lista, 1, mid)
-        rightlist = lt.subList(lista, mid+1, size - mid)
-
-        """se hace el llamado recursivo con la lista izquierda y derecha"""
-        sortArrayListMerge(leftlist)
-        sortArrayListMerge(rightlist)
-
-        """i recorre la lista izquierda, j la derecha y k la lista original"""
-        i = j = k = 1
-
-        leftelements = lt.size(leftlist)
-        rightelements = lt.size(rightlist)
-
-        while (i <= leftelements) and (j <= rightelements):
-            elemi = lt.getElement(leftlist, i)
-            elemj = lt.getElement(rightlist, j)
-            """compara y ordena los elementos"""
-            if cmpArtworkByDate(elemj, elemi):  
-                lt.changeInfo(lista, k, elemj)
-                j += 1
-            else:                           
-                lt.changeInfo(lista, k, elemi)
-                i += 1
-            k += 1
-
-        """Agrega los elementos que no se comprararon y estan ordenados"""
-        while i <= leftelements:
-            lt.changeInfo(lista, k, lt.getElement(leftlist, i))
-            i += 1
-            k += 1
-
-        while j <= rightelements:
-            lt.changeInfo(lista, k, lt.getElement(rightlist, j))
-            j += 1
-            k += 1
-    
-    return lista
 def darUltimasN(lista, numero):
-    b= lt.size(lista)
-    listaUltimos= lt.subList(lista, (b-numero+1),numero)
+    
+    listaUltimos= lt.subList(lista, 1,numero)
     return listaUltimos
+
+
 # Construccion de modelos
 
 # Funciones para agregar informacion al catalogo
