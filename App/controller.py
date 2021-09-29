@@ -163,6 +163,19 @@ def obrasPurchase(lista):
 def cortarLista(lista, muestra):
     lista_nueva= model.cortarLista(lista,muestra)
     return lista_nueva
+#Requisito lab 5
+def filtrarTencnica(museo, tecnica):
+    lista= model.filtrarTencnica(museo,tecnica)
+    return lista
+
+def sortArrayListMergeDate(lista):
+    lista=model.sortArrayListMergeDate(lista)
+    return lista
+def darUltimasN(lista, numero):
+    listaUltimos= model.darUltimasN(lista, numero)
+    return listaUltimos
+
+
 # Inicialización del Catálogo de libros
 
 # Funciones para la carga de datos

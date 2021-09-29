@@ -23,6 +23,7 @@
 import config as cf
 import sys
 import controller
+import time
 from DISClib.ADT import list as lt
 assert cf
 
@@ -226,6 +227,14 @@ while True:
         imprimirDatosObra3(primeras)
         print ('Ultimas 5 obras:')
         imprimirDatosObra3(ultimas)
+    elif int(inputs[0])==8:
+        numero= int(input('Ingrese el numero de obras que desea consultar'))
+        tecnica= input('Ingrese la tecnica que desea consultar')
+        obras= controller.filtrarTencnica(museo, tecnica)
+        ordenadas= controller.sortArrayListMergeDate(obras)
+        listaUltimas= controller.darUltimasN(ordenadas, numero)
+        print('Las ' +str(numero)+ 'obras mas antiguas que usan la tecnica:   '+ tecnica + 'son: ')
+        print(listaUltimas)
 
 
     elif int(inputs[0]) == 0:

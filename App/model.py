@@ -293,6 +293,22 @@ def cmpArtworkByDateAcquired(artwork1, artwork2):
             return False
     except ValueError:
         return False
+def cmpArtworkByDate(artwork1, artwork2):
+    """Devuelve True si la DateAquired de artwork1 es menor que la de artwork2
+    artwork: Información de la primera obra que incluye su"""
+    a= artwork1['Date']
+    b= artwork2['Date']
+    try:
+        if a !='' and b!='':
+            x= int(a)
+            y= int(b)
+            if x<y:
+                return True
+        else: 
+            return False
+    except ValueError:
+        return False
+
 def cmpArtistByDateBirth(artista1, artista2):
     """Devuelve True si la DateAquired de artwork1 es menor que la de artwork2
     artwork: Información de la primera obra que incluye su"""
@@ -635,6 +651,61 @@ def sumaPrecios(obras):
         obra=lt.getElement(obras, i)
         cuenta += obra["Costo"]
     return cuenta
+#requisito lab 5
+def filtrarTencnica(museo, tecnica):
+    a= museo['medios']
+    tecnica=mp.get(a,tecnica)
+    if tecnica:
+        return me.getValue(tecnica)['obras']
+    return None
+
+def sortArrayListMergeDate(lista):
+    size = lt.size(lista)
+    if size > 1:
+        mid = (size // 2)
+        """se divide la lista original, en dos partes, izquierda y derecha,
+        desde el punto mid."""
+        leftlist = lt.subList(lista, 1, mid)
+        rightlist = lt.subList(lista, mid+1, size - mid)
+
+        """se hace el llamado recursivo con la lista izquierda y derecha"""
+        sortArrayListMerge(leftlist)
+        sortArrayListMerge(rightlist)
+
+        """i recorre la lista izquierda, j la derecha y k la lista original"""
+        i = j = k = 1
+
+        leftelements = lt.size(leftlist)
+        rightelements = lt.size(rightlist)
+
+        while (i <= leftelements) and (j <= rightelements):
+            elemi = lt.getElement(leftlist, i)
+            elemj = lt.getElement(rightlist, j)
+            """compara y ordena los elementos"""
+            if cmpArtworkByDate(elemj, elemi):  
+                lt.changeInfo(lista, k, elemj)
+                j += 1
+            else:                           
+                lt.changeInfo(lista, k, elemi)
+                i += 1
+            k += 1
+
+        """Agrega los elementos que no se comprararon y estan ordenados"""
+        while i <= leftelements:
+            lt.changeInfo(lista, k, lt.getElement(leftlist, i))
+            i += 1
+            k += 1
+
+        while j <= rightelements:
+            lt.changeInfo(lista, k, lt.getElement(rightlist, j))
+            j += 1
+            k += 1
+    
+    return lista
+def darUltimasN(lista, numero):
+    b= lt.size(lista)
+    listaUltimos= lt.subList(lista, (b-numero+1),numero)
+    return listaUltimos
 # Construccion de modelos
 
 # Funciones para agregar informacion al catalogo
