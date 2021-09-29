@@ -60,6 +60,8 @@ def cargarObras(museo):
     input_file = csv.DictReader(open(tagsfile, encoding='utf-8'))
     for obra in input_file:
         model.addObra(museo, obra)
+
+
 # Funciones de ordenamiento
 
 def sortArrayListMerge(lista):

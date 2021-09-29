@@ -50,13 +50,19 @@ def museoArrayList():
     
 
     museo= {'artistas': None,
-            'obras': None}
+            'obras': None,
+            'medio': None}
 
     
 
     museo['artistas'] = lt.newList('ARRAY_LIST')
-    museo['obras'] = lt.newList('ARRAY_LIST')                     
-    return (museo)
+    museo['obras'] = lt.newList('ARRAY_LIST')      
+    museo['medio'] = mp.newMap(10000, 
+                                maptype='CHAINING',
+                                loadfactor=4.0,
+                                comparefunction=compareBooksByMedium )      
+
+    return museo
 
 
 # Funciones para agregar informacion al catalogo
@@ -100,6 +106,7 @@ def addArtista(museo, artista):
 def addObra(museo, obra):
     
     lt.addLast(museo['obras'], obra)
+    mp.put(museo['obras'], obra['Medium'], obra)
 # Funciones para creacion de datos
 
 # Funciones de consulta
@@ -297,7 +304,18 @@ def cmpArtistByDateBirth(artista1, artista2):
         return True
     else: 
         return False
-
+def compareBooksByMedium(keyname, medio):
+    """
+    Compara dos nombres de autor. El primero es una cadena
+    y el segundo un entry de un map
+    """
+    medioEntry = me.getKey(medio)
+    if (keyname == medioEntry):
+        return 0
+    elif (keyname > medioEntry):
+        return 1
+    else:
+        return -1
 # Funciones de ordenamiento obras
 
 
