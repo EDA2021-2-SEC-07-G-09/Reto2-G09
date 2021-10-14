@@ -68,6 +68,8 @@ def cargarMedio(lista, medio):
 
 
 
+
+
 # Funciones de ordenamiento
 
 def sortArrayListMerge(lista):

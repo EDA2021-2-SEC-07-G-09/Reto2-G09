@@ -51,7 +51,9 @@ def museoArrayList():
 
     museo= {'artistas': None,
             'obras': None,
-            'medio': None}
+            'medio': None,
+            "nacionalidad":None,
+            }
 
     
 
@@ -61,6 +63,10 @@ def museoArrayList():
                                 maptype='CHAINING',
                                 loadfactor=4.0,
                                 comparefunction=compareBooksByMedium )      
+    museo['nacionalidad'] = mp.newMap(118, 
+                                maptype='CHAINING',
+                                loadfactor=4.0,
+                                comparefunction=cmpNacionalidad )   
 
     return museo
 
@@ -109,6 +115,11 @@ def addObra(museo, obra):
     medios = obra['Medium'].split(",")  # Se obtienen los autores
     for medio in medios:
         addMedio(museo, medio.strip(), obra)
+    """"
+    lista_nacionalidades = compararID(obra,museo["artistas"])
+    for nacionalidad in lt.iterator(lista_nacionalidades):
+        addNacionalidad(museo,nacionalidad,obra)
+    """
 
 def addMedio(museo, medio, obra):
 
@@ -121,6 +132,26 @@ def addMedio(museo, medio, obra):
         medio_actual = lt.newList("ARRAY_LIST")
         mp.put(medios, medio, medio_actual)
     lt.addLast(medio_actual, obra)
+
+def addNacionalidad(museo,nacionalidad,obra):
+    nacion = museo["nacionalidad"]
+    contains = mp.contains(nacion, nacionalidad)
+    if contains :
+        pareja = mp.get(nacion,nacionalidad)
+        actual = me.getValue(pareja)
+    else:
+        actual = lt.newList("ARRAY_LIST")
+        mp.put(nacion, nacionalidad, actual)
+    lt.addLast(actual, obra)
+
+def compararID(obra,artista):
+    ID_obra = obra["ConstituentID"]
+    ID_artista = artista["ConstituentID"]
+    lista = lt.newList("ARRAY_LIST")
+    if ID_artista == ID_obra:
+        lt.addLast(lista,artista["Nationality"])
+
+
     
 def getBooksByMedio(museo, medio):
     """
@@ -353,6 +384,16 @@ def compareBooksByMedium(keyname, medio):
     if (keyname == medioEntry):
         return 0
     elif (keyname > medioEntry):
+        return 1
+    else:
+        return -1
+
+def cmpNacionalidad(keyname, nacionalidad):
+
+    nacionEntry = me.getKey(nacionalidad)
+    if (keyname == nacionEntry):
+        return 0
+    elif (keyname > nacionEntry):
         return 1
     else:
         return -1

@@ -184,6 +184,7 @@ while True:
 
     elif int(inputs[0]) == 5:
         print("Obras clasificadas por la nacionalidad de su creado:")
+        print(museo["nacionalidad"])
 
     elif int(inputs[0]) == 6:
         departamento= input('Inserte el departamento en el que se desea realizar el analisis   ')
