@@ -144,12 +144,14 @@ def addNacionalidad(museo,nacionalidad,obra):
         mp.put(nacion, nacionalidad, actual)
     lt.addLast(actual, obra)
 
-def compararID(obra,artista):
-    ID_obra = obra["ConstituentID"]
-    ID_artista = artista["ConstituentID"]
+def compararID(obra,artista,museo):
+    ID_obra = obra["ConstituentID"][1:-1].split(",")
     lista = lt.newList("ARRAY_LIST")
-    if ID_artista == ID_obra:
-        lt.addLast(lista,artista["Nationality"])
+    for constituent in ID_obra:
+        for artista in lt.iterator(museo["artista"]):
+            ID_artista = museo["artista"]["ConstituentID"]
+            if ID_artista == ID_obra:
+                lt.addLast(lista,artista["Nationality"])
 
 
     
