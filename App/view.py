@@ -34,6 +34,8 @@ Presenta el menu de opciones y por cada seleccion
 se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
+default_limit=1000
+sys.setrecursionlimit(default_limit*100)
 
 def printMenu():
     print("Bienvenido")
@@ -164,11 +166,12 @@ while True:
     elif int(inputs[0]) == 4:
         nombre= input('Ingrese el nombre del artista que desea consultar  ')
         start_time = time.process_time()#O(K)
-        id= controller.artistaID(museo, nombre)#O(N)
+        id= controller.getArtistaNombre(museo, nombre)#O(N)
         obras = controller.obrasID(museo, id)#O(N)
         numero= lt.size(obras)#O(1)
         tecnicas=controller.listarTecnicas(obras)#O(N)
         listaT = controller.contarTecnicas(tecnicas)#O(N)
+        
         tecnicaMasFrecuente=controller.tecnicaMasFrecuente(listaT)#O(N)
         obrasTecnica= controller.clasificarObrasPorTecnica(obras, lt.firstElement(tecnicaMasFrecuente))#O(N)
         stop_time = time.process_time()#O(K)

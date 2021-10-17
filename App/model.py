@@ -58,15 +58,28 @@ def museoArrayList():
     
 
     museo['artistas'] = lt.newList('ARRAY_LIST')
+    museo['ObrasM']=mp.newMap(10000, 
+                                maptype='CHAINING',
+                                loadfactor=4.0,
+                                comparefunction=compareObrasByID)
+    museo['ArtistasM']=mp.newMap(10000, 
+                                maptype='CHAINING',
+                                loadfactor=4.0,
+                                comparefunction=compareArtistaByNombre)
+
     museo['obras'] = lt.newList('ARRAY_LIST')      
     museo['medio'] = mp.newMap(10000, 
                                 maptype='CHAINING',
                                 loadfactor=4.0,
-                                comparefunction=compareBooksByMedium )      
+                                comparefunction=compareObrasByMedium )      
     museo['nacionalidad'] = mp.newMap(118, 
                                 maptype='CHAINING',
                                 loadfactor=4.0,
                                 comparefunction=cmpNacionalidad )   
+    museo['constituentID']=mp.newMap(10000, 
+                                maptype='CHAINING',
+                                loadfactor=4.0,
+                                comparefunction=compareObrasByID ) 
 
     return museo
 
@@ -102,6 +115,7 @@ def crearObra(titulo, artistas, fecha_creacion, medio, fecha_adquisicion, dimens
     obra['fecha_adquisicion']= fecha_adquisicion
     obra['dimensiones']= dimensiones
     return obra
+#Funciones para adicionar al mapa#
 
 def addArtista(museo, artista):
     # Se adiciona el libro a la lista de libros
@@ -144,7 +158,7 @@ def addNacionalidad(museo,nacionalidad,obra):
         mp.put(nacion, nacionalidad, actual)
     lt.addLast(actual, obra)
 
-def compararID(obra,artista,museo):
+def compararID(obra,artista,museo):##TODO
     ID_obra = obra["ConstituentID"][1:-1].split(",")
     lista = lt.newList("ARRAY_LIST")
     for constituent in ID_obra:
@@ -153,16 +167,32 @@ def compararID(obra,artista,museo):
             if ID_artista == ID_obra:
                 lt.addLast(lista,artista["Nationality"])
 
+def addNombre(museo, nombre, artista):
+    medios = museo['ArtistasM']
+    existe = mp.contains(medios, nombre)
+    if existe:
+        dupla = mp.get(medios, nombre)
+        medio_actual = me.getValue(dupla)
+    else:
+        medio_actual = lt.newList("ARRAY_LIST")
+        mp.put(medios, nombre, medio_actual)
+    lt.addLast(medio_actual, artista)
 
-    
-def getBooksByMedio(museo, medio):
-    """
-    Retorna un autor con sus libros a partir del nombre del autor
-    """
-    author = mp.get(museo['medio'], medio)
-    if author:
-        return me.getValue(author)
-    return None
+def addObraById(museo, obra):
+    obrasPorID = museo['ObrasM']
+    b=str(obra['ConstituentID'])     
+    b = b.replace("[", "")
+    b = b.replace("]", "")
+    c=b.split(",")
+    for constituentID in c:
+        existe = mp.contains(obrasPorID,constituentID)
+        if existe:
+            dupla = mp.get(obrasPorID, constituentID)
+            ID_actual = me.getValue(dupla)
+        else:
+            ID_actual = lt.newList("ARRAY_LIST")
+            mp.put(obrasPorID, constituentID, ID_actual)
+        lt.addLast(ID_actual, obra)
 
 # Funciones para creacion de datos
 
@@ -255,36 +285,40 @@ def darPrimerasObras5(museo):
             
 
 #Requisito3
+def getArtworkByMedio(museo, medio):
+    """
+    Retorna un autor con sus libros a partir del nombre del autor
+    """
+    author = mp.get(museo['medio'], medio)
+    if author:
+        return me.getValue(author)
+    return None
 
-def artistaID(museo, nombre):
-    lista= museo['artistas']
-    size= lt.size(lista)
+def getObrasByArtista(museo, nombre):
+    artista= mp.get(museo['Artistas'], nombre)
+    if artista:
+        return me.getValue(artista)
+    return None
 
-    for i in range(1, size+1):
-        a=lt.getElement(lista, i)
-        if nombre==a['DisplayName']:
-            id= a['ConstituentID']
-         
-    return id
+def getObrasById(museo, ID):
+    constituentId= mp.get(museo['constituentID'], ID)
+    if constituentId:
+        return me.getValue(constituentId)
+    return None
+
+def getArtistaNombre(museo, nombre):
+    nombres= mp.get(museo['ArtistasM'], nombre)
+    if nombres:
+        x=me.getValue(nombres)
+        return x['ConstituentID']
+    return None
+
 def obrasID(museo, id):
-    lista= museo['obras']
-    size=lt.size(lista)
-    listaf=lt.newList('ARRAY_LIST')
-    i=1
-    while i<=size:
-        try:
-            a=lt.getElement(lista, i)
-            b=str(a['ConstituentID'])
-            b = b.replace("[", "")
-            b = b.replace("]", "")
-            c=b.split(",")
-            if id in c:
-                lt.addLast(listaf, a)
-            i+=1
-        except ValueError:
-            pass
-    return listaf
-
+    mapa=museo['obrasM']
+    obras=mp.get(mapa, id)
+    lista=me.getValue(obras)
+    return lista
+        
 def clasificarObrasPorTecnica(listaf, tecnica):
     i=1
     size=lt.size(listaf)
@@ -294,7 +328,7 @@ def clasificarObrasPorTecnica(listaf, tecnica):
             lt.addLast(obrasTecnica, lt.getElement(listaf,i))
         i+=1
     return obrasTecnica
- 
+
 def listarTecnicas(listaf):
     tecnicas=lt.newList('ARRAY_LIST')
     size=lt.size(listaf)
@@ -305,7 +339,6 @@ def listarTecnicas(listaf):
             lt.addLast(tecnicas, b)
             
         except ValueError:
-            
             pass
     return tecnicas
 
@@ -332,6 +365,10 @@ def tecnicaMasFrecuente(listaT):
     lt.addLast(retorno, mayor) 
     return retorno
 
+def darUltimasN(lista, numero):
+    
+    listaUltimos= lt.subList(lista, 1,numero)
+    return listaUltimos
 
 
 # Funciones utilizadas para comparar elementos dentro de una lista
@@ -377,7 +414,7 @@ def cmpArtistByDateBirth(artista1, artista2):
         return True
     else: 
         return False
-def compareBooksByMedium(keyname, medio):
+def compareObrasByMedium(keyname, medio):
     """
     Compara dos nombres de autor. El primero es una cadena
     y el segundo un entry de un map
@@ -389,7 +426,31 @@ def compareBooksByMedium(keyname, medio):
         return 1
     else:
         return -1
+def compareArtistaByNombre(keyname, nombre):
+    """
+    Compara dos nombres de autor. El primero es una cadena
+    y el segundo un entry de un map
+    """
+    medioEntry = me.getKey(nombre)
+    if (keyname == medioEntry):
+        return 0
+    elif (keyname > medioEntry):
+        return 1
+    else:
+        return -1
 
+def compareObrasByID(keyname, objectID ):
+    """
+    Compara dos nombres de autor. El primero es una cadena
+    y el segundo un entry de un map
+    """
+    medioEntry = me.getKey(objectID)
+    if (keyname == medioEntry):
+        return 0
+    elif (keyname > medioEntry):
+        return 1
+    else:
+        return -1
 def cmpNacionalidad(keyname, nacionalidad):
 
     nacionEntry = me.getKey(nacionalidad)
@@ -718,17 +779,8 @@ def sumaPrecios(obras):
         obra=lt.getElement(obras, i)
         cuenta += obra["Costo"]
     return cuenta
-#requisito lab 5
-def filtrarTencnica(museo, tecnica):
-    a= museo['medio']
-    tecnica=mp.get(a,tecnica)
-    if tecnica:
-        return me.getValue(tecnica)
-    return None
-def darUltimasN(lista, numero):
-    
-    listaUltimos= lt.subList(lista, 1,numero)
-    return listaUltimos
+
+
 
 
 # Construccion de modelos
@@ -742,3 +794,11 @@ def darUltimasN(lista, numero):
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 # Funciones de ordenamiento
+
+
+def filtrarTencnica(museo, tecnica):
+    a= museo['medio']
+    tecnica=mp.get(a,tecnica)
+    if tecnica:
+        return me.getValue(tecnica)
+    return None

@@ -66,8 +66,20 @@ def cargarMedio(lista, medio):
     for obra in lista:
         model.addMedio(lista, medio, obra)
 
+def cargarNacionalidad(lista,nacionalidad):
+    for obra in lista:
+        model.addNacionalidad(lista,nacionalidad, obra)
 
+def cargarID(artista,museo):
+    for artista in museo:
+        model.compararID(obra,artista,museo)
+def cargarNombre(museo,nombre):
+    for artista in museo:
+        model.addNombre(museo, nombre, artista)
 
+def cargarObraId(museo):
+    for obra in museo: 
+        model.addObraById(museo,obra)
 
 
 # Funciones de ordenamiento
@@ -129,6 +141,33 @@ def tecnicaMasFrecuente(listaT):
 def clasificarObrasPorTecnica(listaf, tecnica):
     obrasTecnica=model.clasificarObrasPorTecnica(listaf,tecnica)
     return obrasTecnica
+
+def getArtworkByMedio(museo, medio):
+    obras= model.getArtworkByMedio(museo,medio)
+    return obras
+
+def getObrasByArtista(museo, nombre):
+    obras= model.getObrasByArtista(museo,nombre)
+    return obras
+
+def getObrasById(museo, ID):
+    obras= getObrasById(museo,ID)
+    return obras
+
+def getArtistaNombre(museo, nombre):
+    artistas=getArtistaNombre(museo,nombre)
+    return artistas
+
+
+def filtrarTencnica(museo, tecnica):
+    tecnicas=filtrarTencnica(museo, tecnica)
+    return tecnicas
+
+
+def darUltimasN(lista, numero):
+    listaUltimos= model.darUltimasN(lista,numero)
+    return listaUltimos
+
 #requisito 5
 def obraDepartamento(museo, departamento):
     listaf=model.obraDepartamento(museo, departamento)
