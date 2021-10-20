@@ -53,7 +53,10 @@ def museoArrayList():
             'obras': None,
             'medio': None,
             "nacionalidad":None,
-            }
+            'ObrasM': None,
+            'ArtistasM': None,
+            'constituentID': None,
+            'department': None}
 
     
 
@@ -80,6 +83,10 @@ def museoArrayList():
                                 maptype='CHAINING',
                                 loadfactor=4.0,
                                 comparefunction=compareObrasByID ) 
+    museo['department']=mp.newMap(30000, 
+                                maptype='CHAINING',
+                                loadfactor=4.0,
+                                comparefunction=compareObrasByDepartment )
 
     return museo
 
@@ -126,14 +133,7 @@ def addArtista(museo, artista):
 def addObra(museo, obra):
     
     lt.addLast(museo['obras'], obra)
-    medios = obra['Medium'].split(",")  # Se obtienen los autores
-    for medio in medios:
-        addMedio(museo, medio.strip(), obra)
-    """"
-    lista_nacionalidades = compararID(obra,museo["artistas"])
-    for nacionalidad in lt.iterator(lista_nacionalidades):
-        addNacionalidad(museo,nacionalidad,obra)
-    """
+   
 
 def addMedio(museo, medio, obra):
 
@@ -193,6 +193,17 @@ def addObraById(museo, obra):
             ID_actual = lt.newList("ARRAY_LIST")
             mp.put(obrasPorID, constituentID, ID_actual)
         lt.addLast(ID_actual, obra)
+        
+def addObraByDepartment(museo,obra,departamento):
+    medios = museo['department']
+    existe = mp.contains(medios, departamento)
+    if existe:
+        dupla = mp.get(medios, departamento)
+        medio_actual = me.getValue(dupla)
+    else:
+        medio_actual = lt.newList("ARRAY_LIST")
+        mp.put(medios, departamento, medio_actual)
+    lt.addLast(medio_actual, obra)
 
 # Funciones para creacion de datos
 
@@ -451,6 +462,19 @@ def compareObrasByID(keyname, objectID ):
         return 1
     else:
         return -1
+def compareObrasByDepartment(keyname, departamento ):
+    """
+    Compara dos nombres de autor. El primero es una cadena
+    y el segundo un entry de un map
+    """
+    medioEntry = me.getKey(departamento)
+    if (keyname == medioEntry):
+        return 0
+    elif (keyname > medioEntry):
+        return 1
+    else:
+        return -1
+
 def cmpNacionalidad(keyname, nacionalidad):
 
     nacionEntry = me.getKey(nacionalidad)
@@ -586,16 +610,16 @@ def fechasRangoArtista(lista, fechai, fechaf):
         if c<=b and c>=a:
             lt.addLast(listaf, artista)
     return listaf
+
+
 #Requerimiento 5
 def obraDepartamento(museo, departamento):
-    lista= museo['obras']
-    size=lt.size(lista)
-    listaf= lt.newList('ARRAY_LIST')
-    for i in range(1, size+1):
-        a=lt.getElement(lista, i)
-        if a['Department']==departamento:
-            lt.addLast(listaf, a)
-    return listaf
+    mapa=museo['department']
+    obras=mp.get(mapa,departamento)
+    lista=me.getValue(obras)
+    return lista
+
+
 
 def precioObra (obras):
     llaves = lt.newList("ARRAY_LIST")
@@ -612,7 +636,6 @@ def precioObra (obras):
             llave = lt.getElement(llaves, i)
             try: 
                 atributo = float(obra[llave])/100
-                print(atributo)
             except ValueError:
                 atributo = 0.0
             lt.addLast(valores, atributo)
@@ -622,13 +645,13 @@ def precioObra (obras):
         area_plan = lt.getElement(valores, 4)*lt.getElement(valores, 6)*72
         profundidad = lt.getElement(valores, 2)
         ancho = lt.getElement(valores, 5)
-        
+    
         if  ancho != 0 and profundidad == 0:
             area_plan = ancho
         if  profundidad  != 0:
             area_plan *=profundidad
         if area_plan > costo:
-           costo = area_plan
+            costo = area_plan
         peso = obra["Weight (kg)"]
         if peso != '':
             peso2 = float(peso)*72
@@ -764,6 +787,9 @@ def sortArrayListMergeCost(lista):
             k += 1
     
     return lista
+
+
+
 def pesoObra(obras):
     cuenta = 0
     for i in range(1, lt.size(obras)+1):
@@ -773,6 +799,7 @@ def pesoObra(obras):
             peso= float(peso)
             cuenta += peso
     return cuenta
+
 def sumaPrecios(obras):
     cuenta = 0
     for i in range(1, lt.size(obras)+1):

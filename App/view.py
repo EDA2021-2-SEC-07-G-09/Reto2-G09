@@ -35,7 +35,7 @@ se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
 default_limit=1000
-sys.setrecursionlimit(default_limit*100)
+sys.setrecursionlimit(default_limit*40)
 
 def printMenu():
     print("Bienvenido")
@@ -65,6 +65,7 @@ def imprimirDatosObra(obras):
         'fecha adquisicion': obra['DateAcquired']}
         print(x)
 def imprimirDatosArtista(artistas):
+
     for artista in artistas['elements']:
         x={'Nombre': artista['DisplayName'],
         'Año de nacimiento': artista['BeginDate'],
@@ -94,7 +95,8 @@ def imprimirDatosObra4(obras):
         'Clasification': obra['Classification'],
         'Medium': obra['Medium'],
         'Dimensions': obra['Dimensions'],
-        'Costo': obra['Costo']}
+        'Costo': obra['Costo'],
+        'Department': obra['Department']}
         print(x)
 
 """
@@ -107,14 +109,16 @@ while True:
         print("Cargando información de los archivos ....")
         museo= museoArrayList()
         cargarDatos(museo)
-        
+        obras=controller.darUltimasObras(museo['obras'])
+        obras2=controller.darUltimosArtistas(museo['artistas'])
         print('Informacion de artistas cargados  ' + str(lt.size(museo['artistas'])))
         print('Información de las obras cargadas  '+ str(lt.size(museo['artistas'])) )
         print('Artistas cargados:   ' + str(lt.size(museo['artistas'])))
         print('Obras cargados:  ' + str(lt.size(museo['obras'])))
-        print('Ultimas tres obras  '+ str(controller.darUltimasObras(museo['obras'])))
-        print('Ultimos tres artistas   '+ str(controller.darUltimosArtistas(museo['artistas'])))
-
+        print('Ultimas tres obras:  ')
+        print(obras)
+        print('Ultimos tres artistas:   ')
+        print(obras2)
     elif int(inputs[0]) == 2:
         articulo= 'artistas'
         lista= museo[articulo]
@@ -193,6 +197,7 @@ while True:
         departamento= input('Inserte el departamento en el que se desea realizar el analisis   ')
         start_time = time.process_time()#O(K)
         obras= controller.obraDepartamento(museo, departamento)#O(N)
+        print(lt.size(obras))
         controller.precioObra(obras)#O(N)
         obrasA=controller.sortArrayListMergeDate(obras)#O(N(logN))
         antiguas= controller.darPrimerasObras5(obras)#O(K)

@@ -37,7 +37,11 @@ def inicatalogArrayList():
 def cargarDatos(museo):
     cargarArtistas(museo)
     cargarObras(museo)
-
+    cargarMedio(museo)
+    cargarNacionalidad(museo)
+    cargarNombre(museo)
+    cargarObraId(museo)
+    cargarObraDepartamento(museo)
 
 
 # Funciones para la carga de datos
@@ -58,28 +62,48 @@ def cargarObras(museo):
     Carga todos los tags del archivo y los agrega a la lista de tags
     """
     tagsfile = cf.data_dir + 'Artworks-utf8-small.csv'
+    
     input_file = csv.DictReader(open(tagsfile, encoding='utf-8'))
     for obra in input_file:
         model.addObra(museo, obra)
 
-def cargarMedio(lista, medio):
-    for obra in lista:
-        model.addMedio(lista, medio, obra)
+def cargarMedio(museo):
+    lista=museo['obras']
+    for i in range(1, lt.size(lista)+1):
+        a=lt.getElement(lista,i)
+        medio= a['Medium']
+        model.addMedio(museo, medio, a)
+        i+=1
 
-def cargarNacionalidad(lista,nacionalidad):
-    for obra in lista:
-        model.addNacionalidad(lista,nacionalidad, obra)
+def cargarNacionalidad(museo):
+    lista=museo['artistas']
+    for i in range(1, lt.size(lista)+1):
+        a=lt.getElement(lista,i)
+        nacionalidad=a['Nationality']
+        model.addNacionalidad(museo,nacionalidad, a)
+        i+=1
 
-def cargarID(artista,museo):
-    for artista in museo:
-        model.compararID(obra,artista,museo)
-def cargarNombre(museo,nombre):
-    for artista in museo:
-        model.addNombre(museo, nombre, artista)
+def cargarNombre(museo):
+    lista=museo['artistas']
+    for i in range(1, lt.size(lista)+1):
+        a=lt.getElement(lista,i)
+        nombre=a['DisplayName']
+        model.addNombre(museo, nombre, a)
+        i+=1
 
 def cargarObraId(museo):
-    for obra in museo: 
-        model.addObraById(museo,obra)
+    lista=museo['obras']
+    for i in range(1, lt.size(lista)+1): 
+        a=lt.getElement(lista, i)
+        model.addObraById(museo,a)
+
+def cargarObraDepartamento(museo):
+    lista=museo['obras']
+    for i in range(1, lt.size(lista)+1):
+        a=lt.getElement(lista,i)
+        departamento=a['Department']
+        model.addObraByDepartment(museo,a,departamento)
+        i+=1
 
 
 # Funciones de ordenamiento
