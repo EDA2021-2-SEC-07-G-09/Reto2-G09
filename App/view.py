@@ -246,6 +246,7 @@ while True:
         print('Las ' +str(numero)+ 'obras mas antiguas que usan la tecnica:   '+ tecnica + 'son: ')
         print(listaUltimas)
 
+
     elif int(inputs[0]) == 0:
         sys.exit(0)
 
