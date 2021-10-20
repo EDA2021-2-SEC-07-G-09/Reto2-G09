@@ -175,16 +175,16 @@ def getObrasByArtista(museo, nombre):
     return obras
 
 def getObrasById(museo, ID):
-    obras= getObrasById(museo,ID)
+    obras= model.getObrasById(museo,ID)
     return obras
 
 def getArtistaNombre(museo, nombre):
-    artistas=getArtistaNombre(museo,nombre)
+    artistas=model.getArtistaNombre(museo,nombre)
     return artistas
 
 
 def filtrarTencnica(museo, tecnica):
-    tecnicas=filtrarTencnica(museo, tecnica)
+    tecnicas=model.filtrarTencnica(museo, tecnica)
     return tecnicas
 
 

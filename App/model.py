@@ -321,12 +321,12 @@ def getArtistaNombre(museo, nombre):
     nombres= mp.get(museo['ArtistasM'], nombre)
     if nombres:
         x=me.getValue(nombres)
-        return x['ConstituentID']
+        return (lt.getElement(x,1))['ConstituentID']
     return None
 
 def obrasID(museo, id):
-    mapa=museo['obrasM']
-    obras=mp.get(mapa, id)
+    mapa=museo['ObrasM']
+    obras=mp.get(mapa, id)                
     lista=me.getValue(obras)
     return lista
         
