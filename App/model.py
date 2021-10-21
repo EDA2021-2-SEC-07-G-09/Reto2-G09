@@ -32,6 +32,7 @@ import math
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
+from DISClib.Algorithms.Sorting import mergesort as merge
 from DISClib.Algorithms.Sorting import shellsort as sa
 assert cf
 
@@ -87,14 +88,15 @@ def museoArrayList():
                                 maptype='CHAINING',
                                 loadfactor=4.0,
                                 comparefunction=compareObrasByDepartment )
-    museo['fechaCompra']=mp.newMap(30000, 
-                                maptype='CHAINING',
-                                loadfactor=4.0,
-                                comparefunction=cmpArtworkByDateAcquired )
+
     museo['fechaNacimiento']=mp.newMap(30000, 
                                 maptype='CHAINING',
                                 loadfactor=4.0,
                                 comparefunction=cmpArtistByDateBirth2 )
+    museo['objectID']=mp.newMap(10000, 
+                                maptype='CHAINING',
+                                loadfactor=4.0,
+                                comparefunction=compareObrasByObjectID ) 
 
     return museo
 
@@ -213,15 +215,15 @@ def addObraByDepartment(museo,obra,departamento):
         mp.put(medios, departamento, medio_actual)
     lt.addLast(medio_actual, obra)
 
-def addObraByDateAquired(museo, obra, fecha):
-    medios = museo['fechaCompra']
-    existe = mp.contains(medios, fecha)
+def addObraByObjectID(museo, obra, ObjectID):
+    id = museo['objectID']
+    existe = mp.contains(id, ObjectID)
     if existe:
-        dupla = mp.get(medios, fecha)
+        dupla = mp.get(id, ObjectID)
         medio_actual = me.getValue(dupla)
     else:
         medio_actual = lt.newList("ARRAY_LIST")
-        mp.put(medios, fecha, medio_actual)
+        mp.put(id, ObjectID, medio_actual)
     lt.addLast(medio_actual, obra)
 
 def addArtistaByDate(museo, obra, fecha):
@@ -253,7 +255,6 @@ def darPrimerosArtistas(museo):
     return listaUltimos
 
 def darPrimerasObras(museo):
-
     listaUltimos= lt.subList(museo, 1,3)
     return listaUltimos
 
@@ -265,13 +266,15 @@ def numeroArtistas(museo):
 def numeroObras(museo):
     size= lt.size(museo['obras'])
     return size
+
 def obrasPurchase(obras):
     numero=0
     for i in range(1, lt.size(obras)):
         a=lt.getElement(obras, i)
-        if a['CreditLine'] == 'Purchase':
+        if 'chase' in a['CreditLine']:
              numero +=1
     return numero
+
 
 #Requisito 6
 def fechasRangoObras(lista, fechai, fechaf):
@@ -420,7 +423,11 @@ def cmpArtworkByDateAcquired(artwork1, artwork2):
     a= artwork1['DateAcquired']
     b= artwork2['DateAcquired']
     try:
-        if a !='' and b!='':
+        if a == '':
+            artwork1['DateAcquired'] = '2050-12-12'
+        if b == '':
+            artwork1['DateAcquired'] = '2050-12-12'
+        elif a !='' and b!='':
             x= dt.datetime.strptime(a, '%Y-%m-%d')
             y= dt.datetime.strptime(b, '%Y-%m-%d')
             if x<y:
@@ -429,6 +436,7 @@ def cmpArtworkByDateAcquired(artwork1, artwork2):
             return False
     except ValueError:
         return False
+
 def cmpArtworkByDate(artwork1, artwork2):
     """Devuelve True si la DateAquired de artwork1 es menor que la de artwork2
     artwork: Información de la primera obra que incluye su"""
@@ -493,6 +501,18 @@ def compareObrasByID(keyname, objectID ):
         return 1
     else:
         return -1
+def compareObrasByObjectID(keyname, objectID ):
+    """
+    Compara dos nombres de autor. El primero es una cadena
+    y el segundo un entry de un map
+    """
+    medioEntry = me.getKey(objectID)
+    if (keyname == medioEntry):
+        return 0
+    elif (keyname > medioEntry):
+        return 1
+    else:
+        return -1
 def cmpArtistByDateBirth2(keyname, fecha):
     medioEntry = me.getKey(fecha)
     if (keyname == medioEntry):
@@ -529,49 +549,9 @@ def cmpNacionalidad(keyname, nacionalidad):
 
 
 def sortArrayListMerge(lista):
-    size = lt.size(lista)
-    if size > 1:
-        mid = (size // 2)
-        """se divide la lista original, en dos partes, izquierda y derecha,
-        desde el punto mid."""
-        leftlist = lt.subList(lista, 1, mid)
-        rightlist = lt.subList(lista, mid+1, size - mid)
-
-        """se hace el llamado recursivo con la lista izquierda y derecha"""
-        sortArrayListMerge(leftlist)
-        sortArrayListMerge(rightlist)
-
-        """i recorre la lista izquierda, j la derecha y k la lista original"""
-        i = j = k = 1
-
-        leftelements = lt.size(leftlist)
-        rightelements = lt.size(rightlist)
-
-        while (i <= leftelements) and (j <= rightelements):
-            elemi = lt.getElement(leftlist, i)
-            elemj = lt.getElement(rightlist, j)
-            """compara y ordena los elementos"""
-            if cmpArtworkByDateAcquired(elemj, elemi):  
-                lt.changeInfo(lista, k, elemj)
-                j += 1
-            else:                           
-                lt.changeInfo(lista, k, elemi)
-                i += 1
-            k += 1
-
-        """Agrega los elementos que no se comprararon y estan ordenados"""
-        while i <= leftelements:
-            lt.changeInfo(lista, k, lt.getElement(leftlist, i))
-            i += 1
-            k += 1
-
-        while j <= rightelements:
-            lt.changeInfo(lista, k, lt.getElement(rightlist, j))
-            j += 1
-            k += 1
-    
+    merge.sort(lista, cmpfunction=cmpArtworkByDateAcquired)
+    merge.sort(lista, cmpfunction=cmpArtworkByDateAcquired)
     return lista
-
 
 def fechasRango( lista, fechai, fechaf):
     
@@ -587,7 +567,8 @@ def fechasRango( lista, fechai, fechaf):
                 lt.addLast(listaf, obra)
             
         except ValueError:
-             pass
+            print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+            print(c)
         
     return listaf
 
@@ -867,10 +848,30 @@ def sumaPrecios(obras):
 
 # Funciones de ordenamiento
 
+#requisito2
+def crearListaObras(museo):
+    a = museo['medio']
+    lista = mp.valueSet(a)
+    listaf = lt.newList("ARRAY_LIST", cmpfunction=cmpArtworkByID)
+    for i in range(1,lt.size(lista)+1):
+        actual = lt.getElement(lista,i)
+        for j in range(1, lt.size(actual)+1):
+            obra = lt.getElement(actual,j)
+            if lt.isPresent(listaf,obra) == 0:
+                lt.addLast(listaf,obra)
+    return listaf
 
-def filtrarTencnica(museo, tecnica):
-    a= museo['medio']
-    tecnica=mp.get(a,tecnica)
-    if tecnica:
-        return me.getValue(tecnica)
-    return None
+
+def cmpArtworkByID(artwork1, artwork2):
+    """Devuelve True si la DateAquired de artwork1 es menor que la de artwork2
+    artwork: Información de la primera obra que incluye su"""
+    a= artwork1['ObjectID']
+    b= artwork2['ObjectID']
+    try:
+        if a !='' and b!='':
+            if a<b:
+                return True
+        else: 
+            return False
+    except ValueError:
+        return False

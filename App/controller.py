@@ -43,6 +43,7 @@ def cargarDatos(museo):
     cargarObraId(museo)
     cargarObraDepartamento(museo)
     cargarArtistaFecha(museo)
+    cargarObraObjectID(museo)
 
 
 # Funciones para la carga de datos
@@ -52,7 +53,7 @@ def cargarArtistas(museo):
     cada uno de ellos, se crea en la lista de autores, a dicho autor y una
     referencia al libro que se esta procesando.
     """
-    booksfile = cf.data_dir + 'Artists-utf8-large.csv'
+    booksfile = cf.data_dir + 'Artists-utf8-small.csv'
     input_file = csv.DictReader(open(booksfile, encoding='utf-8'))
     for artista in input_file:
         model.addArtista(museo, artista)
@@ -62,7 +63,7 @@ def cargarObras(museo):
     """
     Carga todos los tags del archivo y los agrega a la lista de tags
     """
-    tagsfile = cf.data_dir + 'Artworks-utf8-large.csv'
+    tagsfile = cf.data_dir + 'Artworks-utf8-small.csv'
     
     input_file = csv.DictReader(open(tagsfile, encoding='utf-8'))
     for obra in input_file:
@@ -105,13 +106,14 @@ def cargarObraDepartamento(museo):
         departamento=a['Department']
         model.addObraByDepartment(museo,a,departamento)
         i+=1
-def cargarObraFechaCompra(museo):
+def cargarObraObjectID(museo):
     lista= museo['obras']
     for i in range(1, lt.size(lista)+1):
         a=lt.getElement(lista,i)
-        fecha=a['DateAcquired']
-        model.addObraByDateAquired(museo, a, fecha)
+        objectID=a['ObjectID']
+        model.addObraByObjectID(museo, a, objectID)
         i+=1
+
 def cargarArtistaFecha(museo):
     lista= museo['artistas']
     for i in range(1, lt.size(lista)+1):
@@ -266,3 +268,5 @@ def darUltimasN(lista, numero):
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+def crearListaObras(museo):
+    return model.crearListaObras(museo)

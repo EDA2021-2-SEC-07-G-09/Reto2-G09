@@ -137,12 +137,15 @@ while True:
         print('El ordenamiento tomo   '+ str(elapsed_time_mseg)+ '  tiempo en mseg')
         
 
-
     elif int(inputs[0]) == 3:
-        lista= museo['obras']
-        fechai= input('Inserte la fecha inicial en el formato AAAA-MM-DD   ')
-        fechaf= input('Inserte la fecha final en el formato AAAA-MM-DD    ')
+        lista = controller.crearListaObras(museo)
+        print(lt.size(lista))
+        ## fechai= input('Inserte la fecha inicial en el formato AAAA-MM-DD   ')
+        fechai = '1944-06-06'
+        ##fechaf= input('Inserte la fecha final en el formato AAAA-MM-DD    ')
+        fechaf = '1989-11-09'
         start_time = time.process_time()#O(K)
+        
         z= controller.sortArrayListMerge(lista)#O(N(logN))
         lista_final= controller.fechasRango(z, fechai, fechaf)#O(N)
         
@@ -159,7 +162,6 @@ while True:
         print('Ultimas tres obras:  ') 
         imprimirDatosObra(ultimas)
         print('El ordenamiento tomo   '+ str(elapsed_time_mseg)+ '  tiempo en mseg')
-            
     
 
     elif int(inputs[0]) == 4:
