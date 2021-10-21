@@ -111,8 +111,6 @@ while True:
         cargarDatos(museo)
         obras=controller.darUltimasObras(museo['obras'])
         obras2=controller.darUltimosArtistas(museo['artistas'])
-        print('Informacion de artistas cargados  ' + str(lt.size(museo['artistas'])))
-        print('Información de las obras cargadas  '+ str(lt.size(museo['artistas'])) )
         print('Artistas cargados:   ' + str(lt.size(museo['artistas'])))
         print('Obras cargados:  ' + str(lt.size(museo['obras'])))
         print('Ultimas tres obras:  ')
@@ -138,17 +136,12 @@ while True:
         
 
     elif int(inputs[0]) == 3:
-        lista = controller.crearListaObras(museo)
-        print(lt.size(lista))
-        ## fechai= input('Inserte la fecha inicial en el formato AAAA-MM-DD   ')
-        fechai = '1944-06-06'
-        ##fechaf= input('Inserte la fecha final en el formato AAAA-MM-DD    ')
-        fechaf = '1989-11-09'
+        lista = controller.crearListaObras(museo)#O(N^2)
+        fechai= input('Inserte la fecha inicial en el formato AAAA-MM-DD   ')
+        fechaf= input('Inserte la fecha final en el formato AAAA-MM-DD    ')
         start_time = time.process_time()#O(K)
-        
         z= controller.sortArrayListMerge(lista)#O(N(logN))
         lista_final= controller.fechasRango(z, fechai, fechaf)#O(N)
-        
         stop_time = time.process_time()#O(K)
         elapsed_time_mseg = (stop_time - start_time)*1000#O(K)
         primeras=controller.darPrimerasObras(lista_final)#O(K)
