@@ -94,7 +94,7 @@ def museoArrayList():
     museo['fechaNacimiento']=mp.newMap(30000, 
                                 maptype='CHAINING',
                                 loadfactor=4.0,
-                                comparefunction=cmpArtistByDateBirth )
+                                comparefunction=cmpArtistByDateBirth2 )
 
     return museo
 
@@ -267,8 +267,9 @@ def numeroObras(museo):
     return size
 def obrasPurchase(obras):
     numero=0
-    for obra in obras['elements']:
-        if obra['CreditLine']== 'Purchase':
+    for i in range(1, lt.size(obras)):
+        a=lt.getElement(obras, i)
+        if a['CreditLine'] == 'Purchase':
              numero +=1
     return numero
 
@@ -492,6 +493,15 @@ def compareObrasByID(keyname, objectID ):
         return 1
     else:
         return -1
+def cmpArtistByDateBirth2(keyname, fecha):
+    medioEntry = me.getKey(fecha)
+    if (keyname == medioEntry):
+        return 0
+    elif (keyname > medioEntry):
+        return 1
+    else:
+        return -1
+
 def compareObrasByDepartment(keyname, departamento ):
     """
     Compara dos nombres de autor. El primero es una cadena
@@ -563,17 +573,17 @@ def sortArrayListMerge(lista):
     return lista
 
 
-def fechasRango(museo, lista, fechai, fechaf):
+def fechasRango( lista, fechai, fechaf):
     
     listaf=lt.newList('ARRAY_LIST')
     a= dt.datetime.strptime(fechai, '%Y-%m-%d')
     b= dt.datetime.strptime(fechaf, '%Y-%m-%d')
-    mapa= museo['fechaCompra']
     for i in range(1, lt.size(lista)+1):
         try:
             obra = lt.getElement(lista,i)
             c= dt.datetime.strptime(obra['DateAcquired'], '%Y-%m-%d')
-            if c<=b and c>=a:
+            
+            if a<=c<=b:
                 lt.addLast(listaf, obra)
             
         except ValueError:
@@ -631,13 +641,17 @@ def fechasRangoArtista(museo, fechai, fechaf):
     lista=museo['fechaNacimiento']
     anio=fechai
     listaf=lt.newList('ARRAY_LIST')
-    while anio<=fechaf:
+    inicial=int(fechai)
+    final= int(fechaf)
+    anio=inicial
+    while anio<=final:
         a=str(anio)
-        artistas=mp.get(lista, anio)
-        a=me.getValue(artistas)
-        for i in range(1, lt.size(a)+1):
-            lt.addLast(listaf, a[i])
-            i+=1
+        artistas=mp.get(lista, a)
+        c=me.getValue(artistas)
+        for i in range(1, lt.size(c)+1):
+            artista=lt.getElement(c, i)
+            lt.addLast(listaf, artista)
+            
         b=int(anio)
         anio=b+1
     return listaf

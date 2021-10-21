@@ -120,14 +120,10 @@ while True:
         print('Ultimos tres artistas:   ')
         print(obras2)
     elif int(inputs[0]) == 2:
-        articulo= 'artistas'
-        lista= museo[articulo]
         fechai= input('Inserte el año inicial en el formato AAAA   ')
         fechaf= input('Inserte el año final en el formato AAAA    ')
         start_time = time.process_time()#O(K)
-        z= controller.sortArrayListArtistMerge(lista) #linearitmica O(N(logN))
-
-        lista_final= controller.fechasRangoArtist(z, fechai, fechaf) #Lineal O(N)
+        lista_final= controller.fechasRangoArtist(museo, fechai, fechaf) #Lineal O(N^2)
         stop_time = time.process_time() #O(K)
         elapsed_time_mseg = (stop_time - start_time)*1000 #O(K)
         ultimas=controller.darUltimosArtistas(lista_final) #O(K)
@@ -143,8 +139,7 @@ while True:
 
 
     elif int(inputs[0]) == 3:
-        articulo= 'obras'
-        lista= museo[articulo]
+        lista= museo['obras']
         fechai= input('Inserte la fecha inicial en el formato AAAA-MM-DD   ')
         fechaf= input('Inserte la fecha final en el formato AAAA-MM-DD    ')
         start_time = time.process_time()#O(K)
@@ -171,7 +166,7 @@ while True:
         nombre= input('Ingrese el nombre del artista que desea consultar  ')
         start_time = time.process_time()#O(K)
         id= controller.getArtistaNombre(museo, nombre)#O(N)
-        obras = controller.obrasID(museo, id)#O(N)
+        obras = controller.obrasID(museo, id)#O(K)
         numero= lt.size(obras)#O(1)
         tecnicas=controller.listarTecnicas(obras)#O(N)
         listaT = controller.contarTecnicas(tecnicas)#O(N)
@@ -196,7 +191,7 @@ while True:
     elif int(inputs[0]) == 6:
         departamento= input('Inserte el departamento en el que se desea realizar el analisis   ')
         start_time = time.process_time()#O(K)
-        obras= controller.obraDepartamento(museo, departamento)#O(N)
+        obras= controller.obraDepartamento(museo, departamento)#O(K)
         print(lt.size(obras))
         controller.precioObra(obras)#O(N)
         obrasA=controller.sortArrayListMergeDate(obras)#O(N(logN))
