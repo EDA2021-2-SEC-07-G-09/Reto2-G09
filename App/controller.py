@@ -42,6 +42,7 @@ def cargarDatos(museo):
     cargarNombre(museo)
     cargarObraId(museo)
     cargarObraDepartamento(museo)
+    cargarArtistaFecha(museo)
 
 
 # Funciones para la carga de datos
@@ -104,7 +105,20 @@ def cargarObraDepartamento(museo):
         departamento=a['Department']
         model.addObraByDepartment(museo,a,departamento)
         i+=1
-
+def cargarObraFechaCompra(museo):
+    lista= museo['obras']
+    for i in range(1, lt.size(lista)+1):
+        a=lt.getElement(lista,i)
+        fecha=a['DateAcquired']
+        model.addObraByDateAquired(museo, a, fecha)
+        i+=1
+def cargarArtistaFecha(museo):
+    lista= museo['artistas']
+    for i in range(1, lt.size(lista)+1):
+        a=lt.getElement(lista,i)
+        fecha=a['BeginDate']
+        model.addArtistaByDate(museo, a, fecha)
+        i+=1
 
 # Funciones de ordenamiento
 
@@ -239,9 +253,7 @@ def filtrarTencnica(museo, tecnica):
     lista= model.filtrarTencnica(museo,tecnica)
     return lista
 
-def sortArrayListMergeDate(lista):
-    lista=model.sortArrayListMergeDate(lista)
-    return lista
+
 def darUltimasN(lista, numero):
     listaUltimos= model.darUltimasN(lista, numero)
     return listaUltimos

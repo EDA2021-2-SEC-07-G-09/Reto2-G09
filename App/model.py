@@ -56,11 +56,12 @@ def museoArrayList():
             'ObrasM': None,
             'ArtistasM': None,
             'constituentID': None,
-            'department': None}
-
-    
+            'department': None,
+            'fechaCompra': None,
+            'fechaNacimiento': None}
 
     museo['artistas'] = lt.newList('ARRAY_LIST')
+    museo['obras'] = lt.newList('ARRAY_LIST')    
     museo['ObrasM']=mp.newMap(10000, 
                                 maptype='CHAINING',
                                 loadfactor=4.0,
@@ -69,8 +70,7 @@ def museoArrayList():
                                 maptype='CHAINING',
                                 loadfactor=4.0,
                                 comparefunction=compareArtistaByNombre)
-
-    museo['obras'] = lt.newList('ARRAY_LIST')      
+  
     museo['medio'] = mp.newMap(10000, 
                                 maptype='CHAINING',
                                 loadfactor=4.0,
@@ -87,6 +87,14 @@ def museoArrayList():
                                 maptype='CHAINING',
                                 loadfactor=4.0,
                                 comparefunction=compareObrasByDepartment )
+    museo['fechaCompra']=mp.newMap(30000, 
+                                maptype='CHAINING',
+                                loadfactor=4.0,
+                                comparefunction=cmpArtworkByDateAcquired )
+    museo['fechaNacimiento']=mp.newMap(30000, 
+                                maptype='CHAINING',
+                                loadfactor=4.0,
+                                comparefunction=cmpArtistByDateBirth )
 
     return museo
 
@@ -203,6 +211,28 @@ def addObraByDepartment(museo,obra,departamento):
     else:
         medio_actual = lt.newList("ARRAY_LIST")
         mp.put(medios, departamento, medio_actual)
+    lt.addLast(medio_actual, obra)
+
+def addObraByDateAquired(museo, obra, fecha):
+    medios = museo['fechaCompra']
+    existe = mp.contains(medios, fecha)
+    if existe:
+        dupla = mp.get(medios, fecha)
+        medio_actual = me.getValue(dupla)
+    else:
+        medio_actual = lt.newList("ARRAY_LIST")
+        mp.put(medios, fecha, medio_actual)
+    lt.addLast(medio_actual, obra)
+
+def addArtistaByDate(museo, obra, fecha):
+    medios = museo['fechaNacimiento']
+    existe = mp.contains(medios, fecha)
+    if existe:
+        dupla = mp.get(medios, str(fecha))
+        medio_actual = me.getValue(dupla)
+    else:
+        medio_actual = lt.newList("ARRAY_LIST")
+        mp.put(medios, fecha, medio_actual)
     lt.addLast(medio_actual, obra)
 
 # Funciones para creacion de datos
@@ -533,13 +563,12 @@ def sortArrayListMerge(lista):
     return lista
 
 
-def fechasRango(lista, fechai, fechaf):
+def fechasRango(museo, lista, fechai, fechaf):
     
     listaf=lt.newList('ARRAY_LIST')
     a= dt.datetime.strptime(fechai, '%Y-%m-%d')
     b= dt.datetime.strptime(fechaf, '%Y-%m-%d')
-    
-    
+    mapa= museo['fechaCompra']
     for i in range(1, lt.size(lista)+1):
         try:
             obra = lt.getElement(lista,i)
@@ -598,17 +627,19 @@ def sortArrayListArtistMerge(lista):
             k += 1
     return lista
 
-def fechasRangoArtista(lista, fechai, fechaf):
-    
+def fechasRangoArtista(museo, fechai, fechaf):
+    lista=museo['fechaNacimiento']
+    anio=fechai
     listaf=lt.newList('ARRAY_LIST')
-    a= int(fechai)
-    b= int(fechaf)
-    for i in range(1,lt.size(lista)+1):
-        artista=lt.getElement(lista, i)
-        x= artista['BeginDate']
-        c= int(x)
-        if c<=b and c>=a:
-            lt.addLast(listaf, artista)
+    while anio<=fechaf:
+        a=str(anio)
+        artistas=mp.get(lista, anio)
+        a=me.getValue(artistas)
+        for i in range(1, lt.size(a)+1):
+            lt.addLast(listaf, a[i])
+            i+=1
+        b=int(anio)
+        anio=b+1
     return listaf
 
 

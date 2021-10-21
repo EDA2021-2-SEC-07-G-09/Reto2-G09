@@ -220,15 +220,16 @@ while True:
         print('El ordenamiento tomo   '+ str(elapsed_time_mseg)+ '  tiempo en mseg')
 
     elif int(inputs[0]) == 7:
-        print("Nueva exposición propuesta según el area disponible:" )
-        articulo= 'obras'
+        print("Artistas más prolificos del museo:" )
+        articulo= 'artistas'
         lista= museo[articulo]
-        fechai= input('Inserte la fecha inicial en el formato AAAA')
-        fechaf= input('Inserte la fecha final en el formato AAAA')
-        area= input('ingrese el area disponible para la exposición')
-        z= controller.sortArrayListMergeDate(lista)
-        listaf=controller.fechasRangoObras(z, fechai, fechaf)
-        metrosObras= controller.metrosObras(float(area), listaf)
+        
+        fechai= input('Inserte el año inicial en el formato AAAA')
+        fechaf= input('Inserte el año final en el formato AAAA')
+        z= controller.sortArrayListArtistMerge(lista)
+        listaf=controller.fechasRangoArtist(z, fechai, fechaf)
+
+        metrosObras= controller.metrosObras(float(z), listaf)
         primeras= controller.darPrimerasObras5(lt.getElement(metrosObras, 1))
         ultimas=controller.darUltimasObras5(lt.getElement(metrosObras, 1))
         print('Hay'+ str(lt.size(lt.getElement(metrosObras, 1))) + 'obras en la exposición')
