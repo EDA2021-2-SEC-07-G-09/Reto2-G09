@@ -426,7 +426,7 @@ def cmpArtworkByDateAcquired(artwork1, artwork2):
         if a == '':
             artwork1['DateAcquired'] = '2050-12-12'
         if b == '':
-            artwork1['DateAcquired'] = '2050-12-12'
+            artwork2['DateAcquired'] = '2050-12-12'
         elif a !='' and b!='':
             x= dt.datetime.strptime(a, '%Y-%m-%d')
             y= dt.datetime.strptime(b, '%Y-%m-%d')
@@ -567,8 +567,7 @@ def fechasRango( lista, fechai, fechaf):
                 lt.addLast(listaf, obra)
             
         except ValueError:
-            print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
-            print(c)
+            pass
         
     return listaf
 
